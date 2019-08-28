@@ -27,6 +27,19 @@ def test_rank_all():
     }
 
 
+def test_rank_all_will_not_include_matches_below_threshold_quality():
+    s1 = Search([p(1500, 500, ladder_games=0)])
+    s2 = Search([p(2000, 300, ladder_games=50)])
+    searches = [s1, s2]
+
+    ranks = algorithm._rank_all(searches)
+
+    assert ranks == {
+        s1: [],
+        s2: []
+    }
+
+
 def test_stable_marriage():
     s1 = Search([p(2300, 64, name='p1')])
     s2 = Search([p(1200, 72, name='p2')])
