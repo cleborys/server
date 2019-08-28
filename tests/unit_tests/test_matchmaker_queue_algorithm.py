@@ -15,7 +15,7 @@ def p(mean: int, deviation: int, ladder_games: int = config.NEWBIE_MIN_GAMES+1, 
 def test_rank_all():
     s1 = Search([p(1500, 500, ladder_games=0)])
     s2 = Search([p(1500, 400, ladder_games=20)])
-    s3 = Search([p(2000, 300, ladder_games=50)])
+    s3 = Search([p(1600, 360, ladder_games=50)])
     searches = [s1, s2, s3]
 
     ranks = algorithm._rank_all(searches)
@@ -56,7 +56,7 @@ def test_stable_marriage_better_than_greedy():
 
     matches = algorithm.stable_marriage(searches)
 
-    # Note that the most ballanced configuration would be
+    # Note that the most balanced configuration would be
     # assert (s1, s6) in matches  # quality: 0.93
     # assert (s2, s3) in matches  # quality: 0.93
     # assert (s4, s5) in matches  # quality: 0.93
