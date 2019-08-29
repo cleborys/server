@@ -13,9 +13,9 @@ def p(mean: int, deviation: int, ladder_games: int = config.NEWBIE_MIN_GAMES+1, 
 
 
 def test_rank_all():
-    s1 = Search([p(1500, 100, ladder_games=20)])
-    s2 = Search([p(1500, 120, ladder_games=20)])
-    s3 = Search([p(1600, 160, ladder_games=50)])
+    s1 = Search([p(1500, 64, ladder_games=20)])
+    s2 = Search([p(1500, 64, ladder_games=20)])
+    s3 = Search([p(1600, 75, ladder_games=50)])
     searches = [s1, s2, s3]
 
     ranks = algorithm._rank_all(searches)
@@ -62,7 +62,7 @@ def test_stable_marriage_matches_new_players_with_new_and_old_with_old():
     old1 = Search([p(2300, 75, name='old1', ladder_games=100)])
     old2 = Search([p(2350, 75, name='old2', ladder_games=200)])
 
-    searches = [s1, s2, s3, s4]
+    searches = [new1, new2, old1, old2]
 
     matches = algorithm.stable_marriage(searches)
 
