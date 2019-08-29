@@ -55,7 +55,7 @@ def test_search_threshold_of_old_players_is_high(mocker, loop):
 def test_search_threshold_of_new_players_is_low(mocker, loop):
     new_player = Player('new_player', player_id=1, ladder_rating=(1500, 500), ladder_games=1)
     s = Search([new_player])
-    assert s.match_threshold <= 0.01
+    assert s.match_threshold <= 0.4
 
 
 def test_search_quality_equivalence(mocker, loop, matchmaker_players):
