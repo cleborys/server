@@ -13,9 +13,9 @@ def p(mean: int, deviation: int, ladder_games: int = config.NEWBIE_MIN_GAMES+1, 
 
 
 def test_rank_all():
-    s1 = Search([p(1500, 500, ladder_games=0)])
-    s2 = Search([p(1500, 400, ladder_games=20)])
-    s3 = Search([p(1600, 360, ladder_games=50)])
+    s1 = Search([p(1500, 100, ladder_games=20)])
+    s2 = Search([p(1500, 120, ladder_games=20)])
+    s3 = Search([p(1600, 160, ladder_games=50)])
     searches = [s1, s2, s3]
 
     ranks = algorithm._rank_all(searches)
