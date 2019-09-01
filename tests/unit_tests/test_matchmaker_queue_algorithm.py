@@ -141,7 +141,7 @@ def test_unmatched_newbies_forcefully_match_pros():
     newbie = Search([p(0, 500, ladder_games=0)])
     pro = Search([p(2500, 10, ladder_games=100)])
 
-    searches = [newbie1, pro, newbie2]
+    searches = [newbie, pro]
     matches = algorithm.stable_marriage(searches)
 
     assert (newbie, pro) in matches or (pro, newbie) in matches
@@ -153,7 +153,7 @@ def test_odd_number_of_unmatched_newbies():
     newbie3 = Search([p(5500, 500, ladder_games=9)])
     pro = Search([p(2500, 10, ladder_games=100)])
 
-    searches = [newbie1, pro, newbie2]
+    searches = [newbie1, pro, newbie2, newbie3]
     matches = algorithm.stable_marriage(searches)
 
     assert len(matches) == 2
