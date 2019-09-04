@@ -143,6 +143,22 @@ def test_stable_marriage_unmatch():
     assert matches[s2] == s3  # quality: 0.96623
 
 
+def test_random_newbie_matching_is_symmetric():
+    s1 = Search([p(1000, 500, name='p1', ladder_games=5)])
+    s2 = Search([p(1200, 500, name='p2', ladder_games=5)])
+    s3 = Search([p(900, 500, name='p3', ladder_games=5)])
+    s4 = Search([p(1500, 500, name='p4', ladder_games=5)])
+    s5 = Search([p(1700, 500, name='p5', ladder_games=5)])
+    s6 = Search([p(600, 500, name='p6', ladder_games=5)])
+
+    searches = [s1, s2, s3, s4, s5, s6]
+    matches = algorithm.RandomlyMatchNewbies(searches).find()
+
+    for search in matches:
+        opponent = matches[search]
+        assert matches[opponent] == search
+
+
 def test_newbies_are_forcefully_matched_with_newbies():
     newbie1 = Search([p(0, 500, ladder_games=9)])
     newbie2 = Search([p(1500, 500, ladder_games=9)])
