@@ -39,7 +39,7 @@ class MatchmakingPolicy(object):
 
 
 class StableMarriage(MatchmakingPolicy):
-    def find(self) -> List[Match]:
+    def find(self) -> Dict[Search, Search]:
         """Perform SM_NUM_TO_RANK runs of the stable matching algorithm. 
         Assumes that _rank_all only returns edges whose matches are acceptable
         to both parties."""
@@ -95,7 +95,7 @@ class StableMarriage(MatchmakingPolicy):
 
 
 class RandomlyMatchNewbies(MatchmakingPolicy):
-    def find(self) -> List[Match]:
+    def find(self) -> Dict[Search, Search]:
         self.matches.clear()
 
         unmatched_newbies = [
