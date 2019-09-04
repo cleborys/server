@@ -141,7 +141,7 @@ class Matchmaker(object):
                 search for search in self.searches 
                 if search not in self.matches
         ]
-        self.matches.update(RandomlyMatchNewbies(remainind_searches).find())
+        self.matches.update(RandomlyMatchNewbies(remaining_searches).find())
 
         return self._remove_duplicates()
 

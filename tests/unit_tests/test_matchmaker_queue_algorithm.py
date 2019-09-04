@@ -40,6 +40,24 @@ def test_rank_all_will_not_include_matches_below_threshold_quality():
     }
 
 
+def test_stable_marriage_produces_symmetric_matchings():
+    s1 = Search([p(2300, 64, name='p1')])
+    s2 = Search([p(1200, 72, name='p2')])
+    s3 = Search([p(1300, 175, name='p3')])
+    s4 = Search([p(2350, 125, name='p4')])
+    s5 = Search([p(1200, 175, name='p5')])
+    s6 = Search([p(1250, 175, name='p6')])
+
+    searches = [s1, s2, s3, s4, s5, s6]
+
+    matches = algorithm.StableMarriage(searches).find()
+
+    for search in matches:
+        opponent = matches[search]
+        assert matches[opponent] == search
+
+
+
 def test_stable_marriage():
     s1 = Search([p(2300, 64, name='p1')])
     s2 = Search([p(1200, 72, name='p2')])
@@ -50,11 +68,12 @@ def test_stable_marriage():
 
     searches = [s1, s2, s3, s4, s5, s6]
 
-    matches = algorithm.stable_marriage(searches)
+    matches = algorithm.StableMarriage(searches).find()
 
-    assert (s1, s4) in matches
-    assert (s2, s5) in matches
-    assert (s3, s6) in matches
+    assert matches[s1] == s4
+    assert matches[s2] == s5
+    assert matches[s3] == s6
+
 
 def test_stable_marriage_matches_new_players_with_new_and_old_with_old_if_different_mean():
     new1 = Search([p(1500, 500, name='new1', ladder_games=1)])
@@ -64,10 +83,10 @@ def test_stable_marriage_matches_new_players_with_new_and_old_with_old_if_differ
 
     searches = [new1, new2, old1, old2]
 
-    matches = algorithm.stable_marriage(searches)
+    matches = algorithm.StableMarriage(searches).find()
 
-    assert (new1, new2) in matches
-    assert (old1, old2) in matches
+    assert matches[new1] == new2
+    assert matches[old1] == old2
 
 
 def test_stable_marriage_matches_new_players_with_new_and_old_with_old_if_same_mean():
@@ -80,10 +99,10 @@ def test_stable_marriage_matches_new_players_with_new_and_old_with_old_if_same_m
 
     searches = [new1, new2, old1, old2]
 
-    matches = algorithm.stable_marriage(searches)
+    matches = algorithm.StableMarriage(searches).find()
 
-    assert (new1, new2) in matches or (new2, new1) in matches
-    assert (old1, old2) in matches or (old2, old1) in matches
+    assert matches[new1] == new2
+    assert matches[old1] == old2
 
 
 def test_stable_marriage_better_than_greedy():
@@ -96,18 +115,18 @@ def test_stable_marriage_better_than_greedy():
 
     searches = [s1, s2, s3, s4, s5, s6]
 
-    matches = algorithm.stable_marriage(searches)
+    matches = algorithm.StableMarriage(searches).find()
 
     # Note that the most balanced configuration would be
-    # assert (s1, s6) in matches  # quality: 0.93
-    # assert (s2, s3) in matches  # quality: 0.93
-    # assert (s4, s5) in matches  # quality: 0.93
+    # (s1, s6)  quality: 0.93
+    # (s2, s3)  quality: 0.93
+    # (s4, s5)  quality: 0.93
 
     # However, because s1 is first in the list and gets top choice, we end with
     # the following stable configuration
-    assert (s1, s5) in matches  # quality: 0.97
-    assert (s2, s3) in matches  # quality: 0.93
-    assert (s6, s4) in matches  # quality: 0.82
+    assert matches[s1] == s5 # quality: 0.97
+    assert matches[s2] == s3 # quality: 0.93
+    assert matches[s4] == s6 # quality: 0.82
 
 
 def test_stable_marriage_unmatch():
@@ -118,12 +137,10 @@ def test_stable_marriage_unmatch():
 
     searches = [s1, s2, s3, s4]
 
-    matches = algorithm.stable_marriage(searches)
-    for m1, m2 in matches:
-        print(m1, m2, m1.quality_with(m2))
+    matches = algorithm.StableMarriage(searches).find()
 
-    assert (s1, s4) in matches  # quality: 0.96622
-    assert (s2, s3) in matches  # quality: 0.96623
+    assert matches[s1] == s4 # quality: 0.96622
+    assert matches[s2] == s3  # quality: 0.96623
 
 
 def test_newbies_are_forcefully_matched_with_newbies():
@@ -132,9 +149,10 @@ def test_newbies_are_forcefully_matched_with_newbies():
     pro = Search([p(1800, 10, ladder_games=100)])
 
     searches = [newbie1, pro, newbie2]
-    matches = algorithm.stable_marriage(searches)
+    matches = algorithm.RandomlyMatchNewbies(searches).find()
 
-    assert (newbie1, newbie2) in matches or (newbie2, newbie1) in matches
+    assert matches[newbie1] == newbie2
+    assert matches[newbie2] == newbie1
 
 
 def test_unmatched_newbies_forcefully_match_pros():
@@ -142,9 +160,9 @@ def test_unmatched_newbies_forcefully_match_pros():
     pro = Search([p(1800, 10, ladder_games=100)])
 
     searches = [newbie, pro]
-    matches = algorithm.stable_marriage(searches)
+    matches = algorithm.RandomlyMatchNewbies(searches).find()
 
-    assert len(matches) == 1
+    assert len(matches) == 2
 
 
 def test_unmatched_newbies_do_notforcefully_match_top_players():
@@ -152,7 +170,7 @@ def test_unmatched_newbies_do_notforcefully_match_top_players():
     top_player = Search([p(2500, 10, ladder_games=100)])
 
     searches = [newbie, top_player]
-    matches = algorithm.stable_marriage(searches)
+    matches = algorithm.RandomlyMatchNewbies(searches).find()
 
     assert len(matches) == 0
 
@@ -162,7 +180,7 @@ def test_unmatched_newbies_do_not_forcefully_match_teams():
     team = Search([p(1500, 100), p(1500, 100)])
 
     searches = [newbie, team]
-    matches = algorithm.stable_marriage(searches)
+    matches = algorithm.RandomlyMatchNewbies(searches).find()
 
     assert len(matches) == 0
 
@@ -175,7 +193,7 @@ def unmatched_newbie_teams_do_not_forcefully_match_pros():
     pro = Search([p(1800, 10, ladder_games=100)])
 
     searches = [newbie_team, pro]
-    matches = algorithm.stable_marriage(searches)
+    matches = algorithm.RandomlyMatchNewbies(searches).find()
 
     assert len(matches) == 0
 
@@ -187,6 +205,6 @@ def test_odd_number_of_unmatched_newbies():
     pro = Search([p(1800, 10, ladder_games=100)])
 
     searches = [newbie1, pro, newbie2, newbie3]
-    matches = algorithm.stable_marriage(searches)
+    matches = algorithm.RandomlyMatchNewbies(searches).find()
 
-    assert len(matches) == 2
+    assert len(matches) == 4
