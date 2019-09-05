@@ -253,4 +253,3 @@ def test_matchmaker():
     assert {newbie_force_matched, pro_alone} in match_sets
     for match_pair in match_pairs:
         assert top_player not in match_pair
-

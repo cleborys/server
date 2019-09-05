@@ -219,7 +219,4 @@ class Search:
     def __str__(self):
         return "Search({}, {}, {})".format(self.players, self.match_threshold, self.search_expansion)
 
-    def __repr__(self):
-        return str(self)
-
 Match = Tuple[Search, Search]
