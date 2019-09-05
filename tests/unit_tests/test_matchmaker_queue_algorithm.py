@@ -224,3 +224,33 @@ def test_odd_number_of_unmatched_newbies():
     matches = algorithm.RandomlyMatchNewbies(searches).find()
 
     assert len(matches) == 4
+
+def test_matchmaker():
+    newbie_that_matches1 = Search([p(1450, 500, ladder_games=1)])
+    newbie_that_matches2 = Search([p(1550, 500, ladder_games=1)])
+    newbie_force_matched = Search([p(200, 400, ladder_games=9)])
+
+    pro_that_matches1 = Search([p(1800, 60, ladder_games=101)])
+    pro_that_matches2 = Search([p(1750, 50, ladder_games=100)])
+    pro_alone = Search([p(1600, 50, ladder_games=100)])
+
+    top_player = Search([p(2100, 50, ladder_games=200)])
+
+    searches = [
+        newbie_that_matches1,
+        newbie_that_matches2,
+        newbie_force_matched,
+        pro_that_matches1,
+        pro_that_matches2,
+        pro_alone,
+        top_player
+    ]
+    match_pairs = algorithm.make_matches(searches)
+    match_sets = [set(pair) for pair in match_pairs]
+
+    assert {newbie_that_matches1, newbie_that_matches2} in match_sets
+    assert {pro_that_matches1, pro_that_matches2} in match_sets
+    assert {newbie_force_matched, pro_alone} in match_sets
+    for match_pair in match_pairs:
+        assert top_player not in match_pair
+
