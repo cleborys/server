@@ -16,6 +16,7 @@ before_install:
       && git checkout v19.8.12
       && cp -r config.template config
       && ./scripts/init-db.sh
+      && echo https://raw.githubusercontent.com/FAForever/db/$(grep -oP 'faforever/faf-db-migrations:\K(.*)$' ./docker-compose.yml)/test-data.sql
       && wget https://raw.githubusercontent.com/FAForever/db/$(grep -oP 'faforever/faf-db-migrations:\K(.*)$' ./docker-compose.yml)/test-data.sql
       && popd
   - docker exec -i faf-db mysql -uroot -pbanana faf < faf-stack/test-data.sql
